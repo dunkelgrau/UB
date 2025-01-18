@@ -17,20 +17,25 @@ if password == PASSWORD:
     page = st.radio("Wähle eine Seite:", ["Umfrage", "Startseite"])
     
     if page == "Umfrage":
-        # Hier kommt die Umfrage
-        st.subheader("Umfrage: Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?")
+        # Umfragefragen mit denselben Antwortmöglichkeiten
+        questions = [
+            "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?",
+            "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?",
+            "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung."
+        ]
         
-        # Frage und Smileys als Antwortmöglichkeiten
         answers = ["😊", "😐", "😞"]
-        response = st.radio("Wählen Sie eine Antwort:", answers, index=0)
 
-        # Zeige die ausgewählte Antwort
-        if response == "😊":
-            st.write("Sie sind sehr zufrieden! 😊")
-        elif response == "😐":
-            st.write("Sie sind neutral. 😐")
-        elif response == "😞":
-            st.write("Sie sind unzufrieden. 😞")
+        # Schleife für die Anzeige der Fragen und Antworten
+        responses = {}
+        for i, question in enumerate(questions):
+            response = st.radio(question, answers, index=0, key=f"question_{i}")
+            responses[question] = response
+        
+        # Antworten anzeigen
+        st.write("Vielen Dank für Ihre Teilnahme! Hier sind Ihre Antworten:")
+        for question, response in responses.items():
+            st.write(f"{question} - Ihre Antwort: {response}")
         
 elif password != "" and password != PASSWORD:
     # Fehler, falls das Passwort falsch ist
