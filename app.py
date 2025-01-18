@@ -23,9 +23,9 @@ st.write(question)
 response = st.radio("Wählen Sie eine Antwort:", answers, index=0)
 
 # Zeige die ausgewählte Antwort
-if response == ":)":
+if response == "😊":
     st.write("Sie sind sehr zufrieden! 😊")
-elif response == ":I":
+elif response == "😐":
     st.write("Sie sind neutral. 😐")
-elif response == ":(":
+elif response == "😞":
     st.write("Sie sind unzufrieden. 😞")
