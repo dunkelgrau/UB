@@ -1,72 +1,81 @@
+import sqlite3
 import streamlit as st
 
-# Definiere ein festes Passwort
-PASSWORD = "meinGeheimesPasswort"
+# Funktion zum Initialisieren der Datenbank
+def init_db():
+    conn = sqlite3.connect('survey_responses.db')
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS survey_responses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            question TEXT,
+            response TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-# Passwortabfrage
-password = st.text_input("Gib das Passwort ein", type="password")
+# Funktion zum Speichern von Antworten
+def save_to_db(question, response):
+    conn = sqlite3.connect('survey_responses.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO survey_responses (question, response) VALUES (?, ?)", (question, response))
+    conn.commit()
+    conn.close()
 
-# Wenn das Passwort korrekt ist
-if password == PASSWORD:
-    # Erfolgreiche Anmeldung
-    st.session_state.authenticated = True
-    st.title("Willkommen zur Streamlit-App!")
-    st.write("Du hast Zugriff auf die App.")
-    
-    # Verweise zur nächsten Seite
-    page = st.radio("Wähle eine Seite:", ["Umfrage", "Startseite"])
-    
-    # Umfrage
-    if page == "Umfrage":
-        # Umfragefragen mit denselben Antwortmöglichkeiten
-        questions = [
-            "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?",
-            "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?",
-            "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung."
-        ]
-        
-        answers = ["😊", "😐", "😞"]
+# Funktion zum Laden der Antworten aus der Datenbank
+def load_from_db():
+    conn = sqlite3.connect('survey_responses.db')
+    c = conn.cursor()
+    c.execute("SELECT question, response FROM survey_responses")
+    data = c.fetchall()
+    conn.close()
+    return data
 
-        # Schleife für die Anzeige der Fragen und Antworten
-        responses = {}
-        for i, question in enumerate(questions):
-            # Initialisiere die Antwort als None
-            response = st.radio(question, answers, key=f"question_{i}", index=None)
-            responses[question] = response
-        
-        # Antworten anzeigen
-        st.write("Vielen Dank für Ihre Teilnahme! Hier sind Ihre Antworten:")
-        for question, response in responses.items():
-            st.write(f"{question} - Ihre Antwort: {response}")
-    
-    # Startseite (Antworten als Balkendiagramm anzeigen)
-    elif page == "Startseite":
-        # Beispielhafte Antworten für das Diagramm (in der Praxis aus st.session_state oder einer Datenbank)
-        example_responses = {
-            "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?": "😊",
-            "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?": "😐",
-            "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung.": "😞"
-        }
+# Initialisiere die Datenbank
+init_db()
 
-        # Zähle die Häufigkeit der Antworten für jedes Emoji
-        answer_counts = {"😊": 0, "😐": 0, "😞": 0}
-        
-        for response in example_responses.values():
-            answer_counts[response] += 1
+# Streamlit App-Logik
+st.title("Streamlit Umfrage")
 
-        # Daten für das Balkendiagramm
-        chart_data = {
-            "Antwort": list(answer_counts.keys()),
-            "Häufigkeit": list(answer_counts.values())
-        }
+# Umfragefragen
+questions = [
+    "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?",
+    "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?",
+    "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung."
+]
+answers = ["😊", "😐", "😞"]
 
-        # Zeige das Balkendiagramm
-        st.bar_chart(chart_data)
+# Schleife durch Fragen und Antworten
+responses = {}
+for i, question in enumerate(questions):
+    response = st.radio(question, answers, key=f"question_{i}")
+    responses[question] = response
+    # Speichern der Antwort in der Datenbank
+    if response:
+        save_to_db(question, response)
 
-elif password != "" and password != PASSWORD:
-    # Fehler, falls das Passwort falsch ist
-    st.write("Falsches Passwort, bitte versuche es erneut.")
-    
-else:
-    # Wenn noch kein Passwort eingegeben wurde
-    st.write("Bitte gib ein Passwort ein, um fortzufahren.")
+# Antworten anzeigen
+st.write("Vielen Dank für Ihre Teilnahme! Hier sind Ihre Antworten:")
+for question, response in responses.items():
+    st.write(f"{question} - Ihre Antwort: {response}")
+
+# Ergebnisse als Balkendiagramm anzeigen
+st.subheader("Auswertung der Antworten")
+
+# Lade alle Antworten aus der DB
+data = load_from_db()
+
+# Zähle Häufigkeit der Antworten
+answer_counts = {"😊": 0, "😐": 0, "😞": 0}
+for _, response in data:
+    answer_counts[response] += 1
+
+# Daten für das Balkendiagramm
+chart_data = {
+    "Antwort": list(answer_counts.keys()),
+    "Häufigkeit": list(answer_counts.values())
+}
+
+# Zeige das Balkendiagramm
+st.bar_chart(chart_data)
