@@ -49,33 +49,37 @@ answers = ["😊", "😐", "😞"]
 # Schleife durch Fragen und Antworten
 responses = {}
 for i, question in enumerate(questions):
-    response = st.radio(question, answers, key=f"question_{i}")
+    response = st.radio(question, answers, key=f"question_{i}", index=None)
     responses[question] = response
-    # Speichern der Antwort in der Datenbank
-    if response:
-        save_to_db(question, response)
 
-# Antworten anzeigen
-st.write("Vielen Dank für Ihre Teilnahme! Hier sind Ihre Antworten:")
-for question, response in responses.items():
-    st.write(f"{question} - Ihre Antwort: {response}")
+# Button "Fertig" zum Absenden der Antworten
+if st.button("Fertig"):
+    # Speichern der Antworten in der Datenbank
+    for question, response in responses.items():
+        if response:
+            save_to_db(question, response)
 
-# Ergebnisse als Balkendiagramm anzeigen
-st.subheader("Auswertung der Antworten")
+    # Antworten anzeigen
+    st.write("Vielen Dank für Ihre Teilnahme! Hier sind Ihre Antworten:")
+    for question, response in responses.items():
+        st.write(f"{question} - Ihre Antwort: {response}")
 
-# Lade alle Antworten aus der DB
-data = load_from_db()
+    # Ergebnisse als Balkendiagramm anzeigen
+    st.subheader("Auswertung der Antworten")
 
-# Zähle Häufigkeit der Antworten
-answer_counts = {"😊": 0, "😐": 0, "😞": 0}
-for _, response in data:
-    answer_counts[response] += 1
+    # Lade alle Antworten aus der DB
+    data = load_from_db()
 
-# Daten für das Balkendiagramm
-chart_data = {
-    "Antwort": list(answer_counts.keys()),
-    "Häufigkeit": list(answer_counts.values())
-}
+    # Zähle Häufigkeit der Antworten
+    answer_counts = {"😊": 0, "😐": 0, "😞": 0}
+    for _, response in data:
+        answer_counts[response] += 1
 
-# Zeige das Balkendiagramm
-st.bar_chart(chart_data)
+    # Daten für das Balkendiagramm
+    chart_data = {
+        "Antwort": list(answer_counts.keys()),
+        "Häufigkeit": list(answer_counts.values())
+    }
+
+    # Zeige das Balkendiagramm
+    st.bar_chart(chart_data)
