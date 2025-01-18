@@ -1,6 +1,7 @@
 import sqlite3
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Funktion zum Initialisieren der Datenbank
 def init_db():
@@ -99,8 +100,20 @@ if st.button("Fertig"):
     # Erstelle DataFrame für das Diagramm
     chart_df = pd.DataFrame(chart_data, columns=["Frage", "Antwort", "Häufigkeit"])
 
-    # Zeige das Balkendiagramm
-    st.bar_chart(chart_df.pivot(index="Frage", columns="Antwort", values="Häufigkeit"))
+    # Erstelle ein horizontales Balkendiagramm
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for i, question in enumerate(chart_df["Frage"].unique()):
+        question_data = chart_df[chart_df["Frage"] == question]
+        ax.barh(question_data["Antwort"], question_data["Häufigkeit"], label=question)
+
+    # Beschriftungen und Titel
+    ax.set_xlabel("Häufigkeit")
+    ax.set_title("Antworten zur Umfrage")
+    ax.legend(title="Fragen", bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    # Zeige das Diagramm
+    st.pyplot(fig)
 
 # Button zum Löschen der Datenbank
 if st.button("Datenbank löschen"):
