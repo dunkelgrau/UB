@@ -29,8 +29,8 @@ if password == PASSWORD:
         # Schleife für die Anzeige der Fragen und Antworten
         responses = {}
         for i, question in enumerate(questions):
-            # Keine Antwort wird standardmäßig ausgewählt, wenn der index nicht gesetzt ist
-            response = st.radio(question, answers, key=f"question_{i}")
+            # Initialisiere die Antwort als None
+            response = st.radio(question, answers, key=f"question_{i}", index=None)
             responses[question] = response
         
         # Antworten anzeigen
