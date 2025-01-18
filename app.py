@@ -1,5 +1,4 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 
 # Definiere ein festes Passwort
 PASSWORD = "meinGeheimesPasswort"
@@ -42,7 +41,6 @@ if password == PASSWORD:
     
     # Startseite (Antworten als Balkendiagramm anzeigen)
     elif page == "Startseite":
-        # Hier solltest du die gespeicherten Antworten der Umfrage abrufen
         # Beispielhafte Antworten für das Diagramm (in der Praxis aus st.session_state oder einer Datenbank)
         example_responses = {
             "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?": "😊",
@@ -55,18 +53,15 @@ if password == PASSWORD:
         
         for response in example_responses.values():
             answer_counts[response] += 1
-        
-        # Erstelle das Balkendiagramm
-        fig, ax = plt.subplots()
-        ax.bar(answer_counts.keys(), answer_counts.values(), color=["green", "gray", "red"])
-        
-        # Setze Titel und Achsenbeschriftungen
-        ax.set_title("Antwortverteilung")
-        ax.set_xlabel("Antworten")
-        ax.set_ylabel("Häufigkeit")
-        
-        # Zeige das Diagramm in Streamlit an
-        st.pyplot(fig)
+
+        # Daten für das Balkendiagramm
+        chart_data = {
+            "Antwort": list(answer_counts.keys()),
+            "Häufigkeit": list(answer_counts.values())
+        }
+
+        # Zeige das Balkendiagramm
+        st.bar_chart(chart_data)
 
 elif password != "" and password != PASSWORD:
     # Fehler, falls das Passwort falsch ist
