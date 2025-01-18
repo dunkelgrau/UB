@@ -1,5 +1,6 @@
 import sqlite3
 import streamlit as st
+import pandas as pd
 
 # Funktion zum Initialisieren der Datenbank
 def init_db():
@@ -31,6 +32,14 @@ def load_from_db():
     data = c.fetchall()
     conn.close()
     return data
+
+# Funktion zum Löschen der gesamten Datenbank
+def clear_db():
+    conn = sqlite3.connect('survey_responses.db')
+    c = conn.cursor()
+    c.execute("DELETE FROM survey_responses")
+    conn.commit()
+    conn.close()
 
 # Initialisiere die Datenbank
 init_db()
@@ -70,16 +79,30 @@ if st.button("Fertig"):
     # Lade alle Antworten aus der DB
     data = load_from_db()
 
-    # Zähle Häufigkeit der Antworten
-    answer_counts = {"😊": 0, "😐": 0, "😞": 0}
-    for _, response in data:
-        answer_counts[response] += 1
-
-    # Daten für das Balkendiagramm
-    chart_data = {
-        "Antwort": list(answer_counts.keys()),
-        "Häufigkeit": list(answer_counts.values())
+    # Zähle Häufigkeit der Antworten für jede Frage
+    answer_counts = {
+        "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?": {"😊": 0, "😐": 0, "😞": 0},
+        "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?": {"😊": 0, "😐": 0, "😞": 0},
+        "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung.": {"😊": 0, "😐": 0, "😞": 0}
     }
 
+    for question, response in data:
+        if response in answer_counts[question]:
+            answer_counts[question][response] += 1
+
+    # Daten für das Balkendiagramm
+    chart_data = []
+    for question, counts in answer_counts.items():
+        for response, count in counts.items():
+            chart_data.append([question, response, count])
+
+    # Erstelle DataFrame für das Diagramm
+    chart_df = pd.DataFrame(chart_data, columns=["Frage", "Antwort", "Häufigkeit"])
+
     # Zeige das Balkendiagramm
-    st.bar_chart(chart_data)
+    st.bar_chart(chart_df.pivot(index="Frage", columns="Antwort", values="Häufigkeit"))
+
+# Button zum Löschen der Datenbank
+if st.button("Datenbank löschen"):
+    clear_db()
+    st.write("Die Datenbank wurde erfolgreich gelöscht.")
