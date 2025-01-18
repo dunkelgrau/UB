@@ -1,4 +1,5 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 
 # Definiere ein festes Passwort
 PASSWORD = "meinGeheimesPasswort"
@@ -16,6 +17,7 @@ if password == PASSWORD:
     # Verweise zur nächsten Seite
     page = st.radio("Wähle eine Seite:", ["Umfrage", "Startseite"])
     
+    # Umfrage
     if page == "Umfrage":
         # Umfragefragen mit denselben Antwortmöglichkeiten
         questions = [
@@ -37,7 +39,35 @@ if password == PASSWORD:
         st.write("Vielen Dank für Ihre Teilnahme! Hier sind Ihre Antworten:")
         for question, response in responses.items():
             st.write(f"{question} - Ihre Antwort: {response}")
+    
+    # Startseite (Antworten als Balkendiagramm anzeigen)
+    elif page == "Startseite":
+        # Hier solltest du die gespeicherten Antworten der Umfrage abrufen
+        # Beispielhafte Antworten für das Diagramm (in der Praxis aus st.session_state oder einer Datenbank)
+        example_responses = {
+            "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?": "😊",
+            "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?": "😐",
+            "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung.": "😞"
+        }
+
+        # Zähle die Häufigkeit der Antworten für jedes Emoji
+        answer_counts = {"😊": 0, "😐": 0, "😞": 0}
         
+        for response in example_responses.values():
+            answer_counts[response] += 1
+        
+        # Erstelle das Balkendiagramm
+        fig, ax = plt.subplots()
+        ax.bar(answer_counts.keys(), answer_counts.values(), color=["green", "gray", "red"])
+        
+        # Setze Titel und Achsenbeschriftungen
+        ax.set_title("Antwortverteilung")
+        ax.set_xlabel("Antworten")
+        ax.set_ylabel("Häufigkeit")
+        
+        # Zeige das Diagramm in Streamlit an
+        st.pyplot(fig)
+
 elif password != "" and password != PASSWORD:
     # Fehler, falls das Passwort falsch ist
     st.write("Falsches Passwort, bitte versuche es erneut.")
