@@ -16,7 +16,7 @@ else:
 # Fragenkatalaog
 # Frage und Smileys als Antwortmöglichkeiten
 question = "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?"
-answers = [":)", ":I", ":("]
+answers = ["😊", "😐", "😞"]
 
 # Zeige die Frage und die Smileys zur Auswahl an
 st.write(question)
