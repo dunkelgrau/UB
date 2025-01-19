@@ -100,14 +100,15 @@ if st.button("Fertig"):
     # Erstelle DataFrame für das Diagramm
     chart_df = pd.DataFrame(chart_data, columns=["Frage", "Antwort", "Häufigkeit"])
 
-    # Erstelle ein horizontales Balkendiagramm mit Altair
+    # Erstelle das horizontale Balkendiagramm mit Altair
     chart = alt.Chart(chart_df).mark_bar().encode(
         y=alt.Y('Frage:N', title='Frage'),
         x=alt.X('Häufigkeit:Q', title='Häufigkeit'),
-        color='Antwort:N',
+        color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']
     ).properties(
-        title="Antworten zur Umfrage"
+        title="Antworten zur Umfrage",
+        height=300
     )
 
     # Zeige das Diagramm
