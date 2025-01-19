@@ -100,16 +100,16 @@ if st.button("Fertig"):
     # Erstelle DataFrame für das Diagramm
     chart_df = pd.DataFrame(chart_data, columns=["Frage", "Antwort", "Häufigkeit"])
 
-    # Erstelle das horizontale Balkendiagramm mit Altair
+    # Erstelle das horizontale Balkendiagramm mit Altair (Balken untereinander)
     chart = alt.Chart(chart_df).mark_bar().encode(
-        y=alt.Y('Frage:N', title='Frage', axis=alt.Axis(labelAngle=-45)),  # Jede Frage wird untereinander angezeigt
+        y=alt.Y('Antwort:N', title='Antwort', axis=alt.Axis(labelAngle=0)),  # Antworten als eigene Balken (untereinander)
         x=alt.X('Häufigkeit:Q', title='Häufigkeit'),
         color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
-        column='Antwort:N',  # Antwort (Smiley) trennt die Balken je Frage
+        row='Frage:N',  # Jede Frage in einer eigenen Zeile
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']
     ).properties(
         title="Antworten zur Umfrage",
-        height=200
+        height=150
     )
 
     # Zeige das Diagramm
