@@ -105,10 +105,11 @@ if st.button("Fertig"):
         y=alt.Y('Frage:N', title='Frage', axis=alt.Axis(labelAngle=-45)),  # Jede Frage wird untereinander angezeigt
         x=alt.X('Häufigkeit:Q', title='Häufigkeit'),
         color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
+        column='Antwort:N',  # Antwort (Smiley) trennt die Balken je Frage
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']
     ).properties(
         title="Antworten zur Umfrage",
-        height=300
+        height=200
     )
 
     # Zeige das Diagramm
