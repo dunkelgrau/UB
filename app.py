@@ -105,7 +105,7 @@ if st.button("Fertig"):
         x=alt.X('Häufigkeit:Q', title='Häufigkeit'),  # Häufigkeit entlang der X-Achse
         y=alt.Y('Frage:N', title='Frage', axis=alt.Axis(labelAngle=0)),  # Fragen entlang der Y-Achse
         color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
-        row='Frage:N',  # Die Antworten werden nach Frage gruppiert, nicht nach Smiley
+        row='Antwort:N',  # Smileys werden jetzt untereinander innerhalb der Fragen gruppiert
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']
     ).properties(
         title="Antworten zur Umfrage",
