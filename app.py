@@ -50,7 +50,7 @@ st.title("Streamlit Umfrage")
 
 # Umfragefragen
 questions = [
-    "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?",
+    "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft??",
     "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?",
     "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung."
 ]
