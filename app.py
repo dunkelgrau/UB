@@ -100,24 +100,26 @@ if st.button("Fertig"):
     # Erstelle DataFrame für das Diagramm
     chart_df = pd.DataFrame(chart_data, columns=["Frage", "Antwort", "Häufigkeit"])
 
-    # Überarbeite das horizontale Balkendiagramm mit Altair
-    # This section organizes the Altair chart configuration more clearly.
-    # Adjustments to visual properties can now be done more intuitively.
-    # The bar width, axis labels, and sorting parameters are set up for easier customization.
-    chart = alt.Chart(chart_df).mark_bar(size=20).encode(
-        x=alt.X('Häufigkeit:Q', title='Anzahl Antworten'),  # Häufigkeit entlang der X-Achse
-        y=alt.Y('Antwort:N', title='Antworten', sort=['😊', '😐', '😞']),  # Antworten untereinander sortiert
-        color=alt.Color('Antwort:N', legend=alt.Legend(title='Antwortkategorien')),  # Farbliche Codierung je Antwort (Smiley)
-        row=alt.Row('Frage:N', title=None, header=alt.Header(labelAngle=0, labelPadding=10, labelAlign='center')),  # Fragen über den Diagrammen
-        tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']  # Tooltips für interaktive Ansicht
-    ).properties(
-        title="",
-        height=400,
-        width=800
-    )
+    # Erstelle eine Liste mit einzelnen Diagrammen
+    for question in questions:
+        st.write(question)
 
-    # Zeige das Diagramm
-    st.altair_chart(chart, use_container_width=True)
+        # Filtere die Daten für die aktuelle Frage
+        question_df = chart_df[chart_df["Frage"] == question]
+
+        # Erstelle ein Balkendiagramm für diese Frage
+        chart = alt.Chart(question_df).mark_bar(size=20).encode(
+            x=alt.X('Häufigkeit:Q', title='Anzahl Antworten'),  # Häufigkeit entlang der X-Achse
+            y=alt.Y('Antwort:N', title='Antworten', sort=['😊', '😐', '😞']),  # Antworten untereinander sortiert
+            color=alt.Color('Antwort:N', legend=alt.Legend(title='Antwortkategorien')),  # Farbliche Codierung je Antwort (Smiley)
+            tooltip=['Antwort:N', 'Häufigkeit:Q']  # Tooltips für interaktive Ansicht
+        ).properties(
+            height=150,
+            width=800
+        )
+
+        # Zeige das Diagramm unter der Frage
+        st.altair_chart(chart, use_container_width=True)
 
 # Button zum Löschen der Datenbank
 if st.button("Datenbank löschen"):
