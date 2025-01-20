@@ -108,7 +108,7 @@ if st.button("Fertig"):
     # Overall, this chart presents the survey results in a visually distinct, easy-to-read format, making it simpler to interpret the distribution of answers across multiple questions.
     chart = alt.Chart(chart_df).mark_bar().encode(
         row='Antwort:N',  # Smileys werden jetzt untereinander innerhalb der Fragen gruppiert
-        y=alt.Y('Frage:N', title='Fragen', axis=alt.Axis(labelAngle=0)),  # Fragen entlang der Y-Achse
+        y=alt.Y('Frage:N', axis=alt.Axis(labelAngle=0)),  # Fragen entlang der Y-Achse
         x=alt.X('Häufigkeit:Q', title='Häufigkeit'),  # Häufigkeit entlang der X-Achse
         color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']
