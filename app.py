@@ -68,7 +68,7 @@ st.title("Streamlit Umfrage")
 
 # Passwortabfrage
 password = st.text_input("Bitte geben Sie das Passwort ein:", type="password")
-if password != "geheimespasswort":
+if password != "3611":
     st.warning("Falsches Passwort. Bitte versuchen Sie es erneut.")
     st.stop()
 
