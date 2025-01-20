@@ -106,8 +106,9 @@ if st.button("Fertig"):
     # The bar width, axis labels, and sorting parameters are set up for easier customization.
     chart = alt.Chart(chart_df).mark_bar(size=20).encode(
         x=alt.X('Häufigkeit:Q', title='Anzahl Antworten'),  # Häufigkeit entlang der X-Achse
-        y=alt.Y('Frage:N', title='Umfragefragen', sort=['Frage 1', 'Frage 2', 'Frage 3']),  # Fragen entlang der Y-Achse
+        y=alt.Y('Antwort:N', title='Antworten', sort=['😊', '😐', '😞']),  # Antworten untereinander sortiert
         color=alt.Color('Antwort:N', legend=alt.Legend(title='Antwortkategorien')),  # Farbliche Codierung je Antwort (Smiley)
+        column=alt.Column('Frage:N', title=None, header=alt.Header(labelAngle=0)),  # Fragen werden gruppiert
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']  # Tooltips für interaktive Ansicht
     ).properties(
         title="Umfrageergebnisse",
