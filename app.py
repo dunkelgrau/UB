@@ -108,10 +108,10 @@ if st.button("Fertig"):
         x=alt.X('Häufigkeit:Q', title='Anzahl Antworten'),  # Häufigkeit entlang der X-Achse
         y=alt.Y('Antwort:N', title='Antworten', sort=['😊', '😐', '😞']),  # Antworten untereinander sortiert
         color=alt.Color('Antwort:N', legend=alt.Legend(title='Antwortkategorien')),  # Farbliche Codierung je Antwort (Smiley)
-        row=alt.Row('Frage:N', title=None, header=alt.Header(labelAngle=0)),  # Fragen über dem Diagramm dargestellt
+        row=alt.Row('Frage:N', title=None, header=alt.Header(labelAngle=0, labelPadding=10)),  # Fragen über den Diagrammen
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']  # Tooltips für interaktive Ansicht
     ).properties(
-        title="Umfrageergebnisse",
+        title=None,
         height=400,
         width=800
     )
