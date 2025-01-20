@@ -100,21 +100,19 @@ if st.button("Fertig"):
     # Erstelle DataFrame für das Diagramm
     chart_df = pd.DataFrame(chart_data, columns=["Frage", "Antwort", "Häufigkeit"])
 
-    # Erstelle das horizontale Balkendiagramm mit Altair (Fragen horizontal, Balken untereinander)
-    # This section constructs the Altair chart by specifying a horizontal bar chart. 
-    # The 'Häufigkeit' column defines the x-axis, showing the count of each answer.
-    # The y-axis contains the questions, labeled clearly for readability. The colors are mapped to different answer categories.
-    # Tooltips are added for interactive display of question, answer, and frequency.
-    # Overall, this chart presents the survey results in a visually distinct, easy-to-read format, making it simpler to interpret the distribution of answers across multiple questions.
-    chart = alt.Chart(chart_df).mark_bar().encode(
-        row='Antwort:N',  # Smileys werden jetzt untereinander innerhalb der Fragen gruppiert
-        y=alt.Y('Frage:N', sort=['Frage 3', 'Frage 2', 'Frage 1']),
-        x=alt.X('Häufigkeit:Q', title='Häufigkeit'),  # Häufigkeit entlang der X-Achse
-        color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
-        tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']
+    # Überarbeite das horizontale Balkendiagramm mit Altair
+    # This section organizes the Altair chart configuration more clearly.
+    # Adjustments to visual properties can now be done more intuitively.
+    # The bar width, axis labels, and sorting parameters are set up for easier customization.
+    chart = alt.Chart(chart_df).mark_bar(size=20).encode(
+        x=alt.X('Häufigkeit:Q', title='Anzahl Antworten'),  # Häufigkeit entlang der X-Achse
+        y=alt.Y('Frage:N', title='Umfragefragen', sort=['Frage 1', 'Frage 2', 'Frage 3']),  # Fragen entlang der Y-Achse
+        color=alt.Color('Antwort:N', legend=alt.Legend(title='Antwortkategorien')),  # Farbliche Codierung je Antwort (Smiley)
+        tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']  # Tooltips für interaktive Ansicht
     ).properties(
-        title="Antworten zur Umfrage",
-        height=150
+        title="Umfrageergebnisse",
+        height=400,
+        width=800
     )
 
     # Zeige das Diagramm
