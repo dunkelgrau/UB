@@ -49,16 +49,16 @@ def load_from_db():
 
 # Funktion zum Löschen der gesamten Datenbank
 def clear_db():
-    try:
-        if st.button("Datenbank wirklich löschen?"):
+    if st.button("Datenbank wirklich löschen?"):
+        try:
             conn = sqlite3.connect('survey_responses.db')
             c = conn.cursor()
             c.execute("DELETE FROM survey_responses")
             conn.commit()
-    except sqlite3.DatabaseError as e:
-        st.error(f"Ein Fehler ist aufgetreten: {e}")
-    finally:
-        conn.close()
+        except sqlite3.DatabaseError as e:
+            st.error(f"Ein Fehler ist aufgetreten: {e}")
+        finally:
+            conn.close()
 
 # Initialisiere die Datenbank
 init_db()
@@ -68,7 +68,7 @@ st.title("Streamlit Umfrage")
 
 # Passwortabfrage
 password = st.text_input("Bitte geben Sie das Passwort ein:", type="password")
-if password != "3611":
+if password != "geheimespasswort":
     st.warning("Falsches Passwort. Bitte versuchen Sie es erneut.")
     st.stop()
 
@@ -166,6 +166,8 @@ if st.button("Fertig"):
         st.altair_chart(chart, use_container_width=True)
 
 # Button zum Löschen der Datenbank
+clear_db()
+
 if st.button("Datenbank wirklich löschen?"):
     clear_db()
     st.write("Die Datenbank wurde erfolgreich gelöscht.")
