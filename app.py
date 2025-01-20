@@ -19,28 +19,46 @@ def init_db():
 
 # Funktion zum Speichern von Antworten
 def save_to_db(question, response):
-    conn = sqlite3.connect('survey_responses.db')
-    c = conn.cursor()
-    c.execute("INSERT INTO survey_responses (question, response) VALUES (?, ?)", (question, response))
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect('survey_responses.db')
+        c = conn.cursor()
+        c.execute("INSERT INTO survey_responses (question, response) VALUES (?, ?)", (question, response))
+        conn.commit()
+    except sqlite3.DatabaseError as e:
+        st.error(f"Ein Fehler ist aufgetreten: {e}")
+    finally:
+        conn.close()
 
 # Funktion zum Laden der Antworten aus der Datenbank
 def load_from_db():
-    conn = sqlite3.connect('survey_responses.db')
-    c = conn.cursor()
-    c.execute("SELECT question, response FROM survey_responses")
-    data = c.fetchall()
-    conn.close()
+    try:
+        conn = sqlite3.connect('survey_responses.db')
+        c = conn.cursor()
+        c.execute("SELECT question, response FROM survey_responses")
+        data = c.fetchall()
+        # Verify that the data matches the expected format
+        if not all(len(row) == 2 and isinstance(row[0], str) and isinstance(row[1], str) for row in data):
+            st.warning("Die Daten aus der Datenbank entsprechen nicht dem erwarteten Format.")
+            data = []
+    except sqlite3.DatabaseError as e:
+        st.error(f"Ein Fehler ist aufgetreten: {e}")
+        data = []
+    finally:
+        conn.close()
     return data
 
 # Funktion zum Löschen der gesamten Datenbank
 def clear_db():
-    conn = sqlite3.connect('survey_responses.db')
-    c = conn.cursor()
-    c.execute("DELETE FROM survey_responses")
-    conn.commit()
-    conn.close()
+    try:
+        if st.button("Datenbank wirklich löschen?"):
+            conn = sqlite3.connect('survey_responses.db')
+            c = conn.cursor()
+            c.execute("DELETE FROM survey_responses")
+            conn.commit()
+    except sqlite3.DatabaseError as e:
+        st.error(f"Ein Fehler ist aufgetreten: {e}")
+    finally:
+        conn.close()
 
 # Initialisiere die Datenbank
 init_db()
@@ -50,7 +68,7 @@ st.title("Streamlit Umfrage")
 
 # Passwortabfrage
 password = st.text_input("Bitte geben Sie das Passwort ein:", type="password")
-if password != "3611":
+if password != "geheimespasswort":
     st.warning("Falsches Passwort. Bitte versuchen Sie es erneut.")
     st.stop()
 
@@ -58,7 +76,17 @@ if password != "3611":
 questions = [
     "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?",
     "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?",
-    "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung."
+    "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung.",
+    "Für die Erledigung meiner Aufgaben erhalte ich alle notwendigen Informationen.",
+    "Meine Führungskräfte halten mich über wichtige aktuelle Themen und Veränderungen auf dem Laufenden.",
+    "Die Bank hält mich über wichtige aktuelle Themen und Veränderungen auf dem Laufenden.",
+    "Wie zufrieden sind Sie insgesamt mit der Stimmungslage in Ihrem direkten Arbeitsumfeld?",
+    "Wie zufrieden sind Sie insgesamt mit der Stimmungslage in der Bank?",
+    "Wie zufrieden sind Sie insgesamt mit den Inhalten und Anforderungen Ihrer Arbeit?",
+    "Durch meine Arbeit kann ich mich persönlich bzw. beruflich weiterentwickeln.",
+    "Ich kann durch meine Arbeit einen Beitrag zum Erfolg der Bank leisten.",
+    "Ich arbeite gern bei meinem Arbeitgeber.",
+    "Ich kann meinen Arbeitgeber als guten Arbeitgeber empfehlen."
 ]
 answers = ["😊", "😐", "😞"]
 
@@ -90,7 +118,17 @@ if st.button("Fertig"):
     answer_counts = {
         "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?": {"😊": 0, "😐": 0, "😞": 0},
         "Wie zufrieden sind Sie mit der Anerkennung Ihrer Leistungen durch Ihre Führungskraft?": {"😊": 0, "😐": 0, "😞": 0},
-        "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung.": {"😊": 0, "😐": 0, "😞": 0}
+        "Bei Problemen erhalte ich von meiner Führungskraft die notwendige Unterstützung.": {"😊": 0, "😐": 0, "😞": 0},
+        "Für die Erledigung meiner Aufgaben erhalte ich alle notwendigen Informationen.": {"😊": 0, "😐": 0, "😞": 0},
+        "Meine Führungskräfte halten mich über wichtige aktuelle Themen und Veränderungen auf dem Laufenden.": {"😊": 0, "😐": 0, "😞": 0},
+        "Die Bank hält mich über wichtige aktuelle Themen und Veränderungen auf dem Laufenden.": {"😊": 0, "😐": 0, "😞": 0},
+        "Wie zufrieden sind Sie insgesamt mit der Stimmungslage in Ihrem direkten Arbeitsumfeld?": {"😊": 0, "😐": 0, "😞": 0},
+        "Wie zufrieden sind Sie insgesamt mit der Stimmungslage in der Bank?": {"😊": 0, "😐": 0, "😞": 0},
+        "Wie zufrieden sind Sie insgesamt mit den Inhalten und Anforderungen Ihrer Arbeit?": {"😊": 0, "😐": 0, "😞": 0},
+        "Durch meine Arbeit kann ich mich persönlich bzw. beruflich weiterentwickeln.": {"😊": 0, "😐": 0, "😞": 0},
+        "Ich kann durch meine Arbeit einen Beitrag zum Erfolg der Bank leisten.": {"😊": 0, "😐": 0, "😞": 0},
+        "Ich arbeite gern bei meinem Arbeitgeber.": {"😊": 0, "😐": 0, "😞": 0},
+        "Ich kann meinen Arbeitgeber als guten Arbeitgeber empfehlen.": {"😊": 0, "😐": 0, "😞": 0}
     }
 
     for question, response in data:
@@ -128,6 +166,6 @@ if st.button("Fertig"):
         st.altair_chart(chart, use_container_width=True)
 
 # Button zum Löschen der Datenbank
-if st.button("Datenbank löschen"):
+if st.button("Datenbank wirklich löschen?"):
     clear_db()
     st.write("Die Datenbank wurde erfolgreich gelöscht.")
