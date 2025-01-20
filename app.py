@@ -101,11 +101,16 @@ if st.button("Fertig"):
     chart_df = pd.DataFrame(chart_data, columns=["Frage", "Antwort", "Häufigkeit"])
 
     # Erstelle das horizontale Balkendiagramm mit Altair (Fragen horizontal, Balken untereinander)
+    # This section constructs the Altair chart by specifying a horizontal bar chart. 
+    # The 'Häufigkeit' column defines the x-axis, showing the count of each answer.
+    # The y-axis contains the questions, labeled clearly for readability. The colors are mapped to different answer categories.
+    # Tooltips are added for interactive display of question, answer, and frequency.
+    # Overall, this chart presents the survey results in a visually distinct, easy-to-read format, making it simpler to interpret the distribution of answers across multiple questions.
     chart = alt.Chart(chart_df).mark_bar().encode(
-        x=alt.X('Häufigkeit:Q', title='Häufigkeit'),  # Häufigkeit entlang der X-Achse
-        y=alt.Y('Frage:N', title='Frage', axis=alt.Axis(labelAngle=0)),  # Fragen entlang der Y-Achse
-        color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
         row='Antwort:N',  # Smileys werden jetzt untereinander innerhalb der Fragen gruppiert
+        y=alt.Y('Frage:N', title='Frage', axis=alt.Axis(labelAngle=0)),  # Fragen entlang der Y-Achse
+        x=alt.X('Häufigkeit:Q', title='Häufigkeit'),  # Häufigkeit entlang der X-Achse
+        color='Antwort:N',  # Farbliche Codierung je Antwort (Smiley)
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']
     ).properties(
         title="Antworten zur Umfrage",
