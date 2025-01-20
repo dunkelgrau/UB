@@ -55,6 +55,7 @@ def clear_db():
             c = conn.cursor()
             c.execute("DELETE FROM survey_responses")
             conn.commit()
+            st.write("Die Datenbank wurde erfolgreich gelöscht.")
         except sqlite3.DatabaseError as e:
             st.error(f"Ein Fehler ist aufgetreten: {e}")
         finally:
@@ -167,7 +168,3 @@ if st.button("Fertig"):
 
 # Button zum Löschen der Datenbank
 clear_db()
-
-if st.button("Datenbank wirklich löschen?"):
-    clear_db()
-    st.write("Die Datenbank wurde erfolgreich gelöscht.")
