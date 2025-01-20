@@ -48,6 +48,12 @@ init_db()
 # Streamlit App-Logik
 st.title("Streamlit Umfrage")
 
+# Passwortabfrage
+password = st.text_input("Bitte geben Sie das Passwort ein:", type="password")
+if password != "geheimespasswort":
+    st.warning("Falsches Passwort. Bitte versuchen Sie es erneut.")
+    st.stop()
+
 # Umfragefragen
 questions = [
     "Wie zufrieden sind Sie mit der Zusammenarbeit mit Ihrer Führungskraft?",
