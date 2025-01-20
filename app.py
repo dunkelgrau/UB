@@ -49,7 +49,7 @@ def load_from_db():
 
 # Funktion zum Löschen der gesamten Datenbank
 def clear_db():
-    if st.button("Datenbank wirklich löschen?"):
+    if st.button("Datenbank wirklich löschen?", key="delete_button_1"):
         try:
             conn = sqlite3.connect('survey_responses.db')
             c = conn.cursor()
