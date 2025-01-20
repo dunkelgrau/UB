@@ -65,7 +65,7 @@ def clear_db():
 init_db()
 
 # Streamlit App-Logik
-st.title("Streamlit Umfrage")
+st.title("Umfrage")
 
 # Passwortabfrage
 password = st.text_input("Bitte geben Sie das Passwort ein:", type="password")
