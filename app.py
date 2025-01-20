@@ -111,7 +111,7 @@ if st.button("Fertig"):
         row=alt.Row('Frage:N', title=None, header=alt.Header(labelAngle=0, labelPadding=10)),  # Fragen über den Diagrammen
         tooltip=['Frage:N', 'Antwort:N', 'Häufigkeit:Q']  # Tooltips für interaktive Ansicht
     ).properties(
-        title=None,
+        title="",
         height=400,
         width=800
     )
