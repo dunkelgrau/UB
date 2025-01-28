@@ -68,7 +68,7 @@ init_db()
 st.title("Umfrage")
 
 # Passwortabfrage
-password = st.text_input("Bitte geben Sie das Passwort ein:", type="password")
+password = st.text_input("Bitte geben Sie das Passwort hier ein:", type="password")
 if password != "3611":
     st.warning("Falsches Passwort. Bitte versuchen Sie es erneut.")
     st.stop()
