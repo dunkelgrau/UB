@@ -2,16 +2,29 @@ from supabase import create_client, Client
 import streamlit as st
 import pandas as pd
 import altair as alt
+from datetime import datetime
+import uuid
 
 # Supabase-Zugangsdaten
 SUPABASE_URL = "https://kksagcnbjacgduhvkldk.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrc2FnY25iamFjZ2R1aHZrbGRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2MzQ1NTUsImV4cCI6MjA1ODIxMDU1NX0.oZAOILug03QxZOP7U35M7Eflgv1A2KTpU9jUt-h79Eo"
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# Benutzer-ID generieren (einmal pro Session)
+if "user_id" not in st.session_state:
+    st.session_state["user_id"] = str(uuid.uuid4())
+
+user_id = st.session_state["user_id"]
+
 # Funktion zum Speichern von Antworten
 def save_to_db(question, response):
     try:
-        data = {"question": question, "response": response}
+        data = {
+            "question": question,
+            "response": response,
+            "user_id": user_id,
+            "created_at": datetime.utcnow().isoformat()
+        }
         res = supabase.table("survey_responses").insert(data).execute()
         if not res.data:
             st.error("Fehler beim Speichern.")
@@ -21,9 +34,9 @@ def save_to_db(question, response):
 # Funktion zum Laden der Antworten aus Supabase
 def load_from_db():
     try:
-        res = supabase.table("survey_responses").select("question, response").execute()
+        res = supabase.table("survey_responses").select("question, response, user_id, created_at").execute()
         if res.data:
-            return [(row["question"], row["response"]) for row in res.data]
+            return res.data
         else:
             st.warning("Keine Daten gefunden.")
             return []
@@ -86,9 +99,11 @@ if st.button("Fertig"):
     data = load_from_db()
 
     answer_counts = {q: {a: 0 for a in answers} for q in questions}
-    for question, response in data:
-        if question in answer_counts and response in answer_counts[question]:
-            answer_counts[question][response] += 1
+    for row in data:
+        q = row["question"]
+        r = row["response"]
+        if q in answer_counts and r in answer_counts[q]:
+            answer_counts[q][r] += 1
 
     chart_data = []
     for question, counts in answer_counts.items():
@@ -107,6 +122,13 @@ if st.button("Fertig"):
             tooltip=['Antwort:N', 'Häufigkeit:Q']
         ).properties(height=150, width=800)
         st.altair_chart(chart, use_container_width=True)
+
+# CSV-Export-Button
+if st.button("Antworten als CSV herunterladen"):
+    data = load_from_db()
+    if data:
+        df = pd.DataFrame(data)
+        st.download_button("Download CSV", df.to_csv(index=False), "antworten.csv", "text/csv")
 
 # Button zum Löschen der Datenbank
 clear_db()
