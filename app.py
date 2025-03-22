@@ -16,10 +16,10 @@ def save_to_db(question, response):
     st.write(f"Speichere in Supabase: {question} - {response}")  # Debug-Ausgabe
     try:
         data = {"question": question, "response": response}
-       res = supabase.table("survey_responses").insert(data).execute()
-       if res.data is None or res.data == []:
-        st.error(f"Fehler beim Speichern: {res}")
-        st.write("Antwort gespeichert:", res.data)
+        res = supabase.table("survey_responses").insert(data).execute()
+        if res.data is None or res.data == []:
+            st.error(f"Fehler beim Speichern: {res}")
+            st.write("Antwort gespeichert:", res.data)
     except Exception as e:
         st.error(f"Ein Fehler ist aufgetreten: {e}")
 
