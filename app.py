@@ -1,9 +1,41 @@
+from supabase import create_client, Client
+import os
 import sqlite3
 import streamlit as st
 import pandas as pd
 import altair as alt
 
+# Supabase-Zugangsdaten (aus deinem Supabase-Dashboard)
+SUPABASE_URL = "https://kksagcnbjacgduhvkldk.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrc2FnY25iamFjZ2R1aHZrbGRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2MzQ1NTUsImV4cCI6MjA1ODIxMDU1NX0.oZAOILug03QxZOP7U35M7Eflgv1A2KTpU9jUt-h79Eo"
+
+# Supabase-Client erstellen
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+def save_to_db(question, response):
+    try:
+        data = {"question": question, "response": response}
+        res = supabase.table("survey_responses").insert(data).execute()
+        if res.status_code != 201:
+            st.error(f"Fehler beim Speichern: {res}")
+    except Exception as e:
+        st.error(f"Ein Fehler ist aufgetreten: {e}")
+
+
+def load_from_db():
+    try:
+        res = supabase.table("survey_responses").select("question, response").execute()
+        if res.status_code == 200 and res.data:
+            return [(row['question'], row['response']) for row in res.data]
+        else:
+            st.warning("Keine Daten gefunden.")
+            return []
+    except Exception as e:
+        st.error(f"Ein Fehler ist aufgetreten: {e}")
+        return []
+
 # Funktion zum Initialisieren der Datenbank
+"""
 def init_db():
     conn = sqlite3.connect('survey_responses.db')
     c = conn.cursor()
@@ -63,6 +95,18 @@ def clear_db():
 
 # Initialisiere die Datenbank
 init_db()
+"""
+
+def clear_db():
+    if st.button("Datenbank wirklich löschen?", key="delete_button_1"):
+        try:
+            res = supabase.table("survey_responses").delete().neq("id", 0).execute()
+            if res.status_code == 200:
+                st.success("Alle Daten wurden gelöscht.")
+            else:
+                st.error(f"Fehler beim Löschen: {res}")
+        except Exception as e:
+            st.error(f"Ein Fehler ist aufgetreten: {e}")
 
 # Streamlit App-Logik
 st.title("Umfrage")
