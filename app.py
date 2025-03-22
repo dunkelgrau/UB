@@ -13,6 +13,7 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def save_to_db(question, response):
+    st.write(f"Speichere in Supabase: {question} - {response}")  # Debug-Ausgabe
     try:
         data = {"question": question, "response": response}
         res = supabase.table("survey_responses").insert(data).execute()
